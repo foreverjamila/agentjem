@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from google import genai
+import argparse
 
 # Load environment variables from .env
 load_dotenv()
@@ -13,12 +14,16 @@ if api_key is None:
 # Create Gemini client
 client = genai.Client(api_key=api_key)
 
-prompt = "Why is Boot.dev such a great place to learn backend development? Use one paragraph maximum."
+
+# Set up argument parser
+parser = argparse.ArgumentParser(description="AgentJem — AI-powered CLI")
+parser.add_argument("user_prompt", type=str, help="The prompt to send to Gemini")
+args = parser.parse_args()
 
 # Send a prompt and print the response
 response = client.models.generate_content(
     model="gemini-2.5-flash",
-    contents=prompt
+    contents=args.user_prompt
 )
 
 # Guard: verify usage metadata exists
@@ -27,7 +32,7 @@ if response.usage_metadata is None:
 
 
 
-print(f"User prompt: {prompt}")
+print(f"User prompt: {args.user_prompt}")
 print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
 print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
 print(f"Response:\n{response.text}")
