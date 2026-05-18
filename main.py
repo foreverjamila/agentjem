@@ -19,6 +19,7 @@ client = genai.Client(api_key=api_key)
 # Set up argument parser
 parser = argparse.ArgumentParser(description="AgentJem — AI-powered CLI")
 parser.add_argument("user_prompt", type=str, help="The prompt to send to Gemini")
+parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
 args = parser.parse_args()
 
 
@@ -41,11 +42,13 @@ if response.usage_metadata is None:
     raise RuntimeError("No usage metadata in response. The API request may have failed.")
 
 
+# Only print metadata if --verbose flag is set
+if args.verbose:
+    print(f"User prompt: {args.user_prompt}")
+    print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
+    print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
 
-print(f"User prompt: {args.user_prompt}")
-print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
-print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
-print(f"Response:\n{response.text}")
+print(response.text)
 
 
 
